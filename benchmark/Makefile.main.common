@@ -1,0 +1,86 @@
+########################### User defined variables ###########################
+NAME ?= main
+DEBUGFLAGS ?= -debug
+OBJ_FILES ?=
+COV_FILES ?=
+FUZZ_FILES ?=
+
+LINK_LIBS = -lpmem
+
+################# Dont' edit the following lines accidently ##################
+CC = $(LLVM9_BIN)/clang
+CXX = $(LLVM9_BIN)/clang++
+OPT = $(LLVM9_BIN)/opt
+LLC = $(LLVM9_BIN)/llc
+LLVM_LINK = $(LLVM9_BIN)/llvm-link
+CFLAGS += -g -O0 -c -emit-llvm
+TRACER_DIR = $(DURINN_HOME)/tracer
+IR_FILES = $(DURINN_HOME)/benchmark/pmdk-1.8-deps/*.bc
+
+LOCK_MODELING = $(TRACER_DIR)/lock_modeling.txt
+UNLOCK_MODELING = $(TRACER_DIR)/unlock_modeling.txt
+
+.PHONY: all
+
+all: $(NAME).trace.exe $(NAME).exe
+
+$(NAME).trace.exe : $(NAME).trace.o
+	$(CXX) -fno-strict-aliasing $(TRACER_DIR)/Tracing.o $(NAME).trace.o -o $@ $(LINK_LIBS) -lpthread -ldl
+
+$(NAME).trace.o : $(NAME).trace.bc
+	$(LLC) -asm-verbose=false -O0 -filetype=obj $< -o $@
+
+# Instrument .bc to .trace.bc which contains recording code
+$(NAME).trace.bc : $(NAME).all.bc
+	$(OPT) -load $(TRACER_DIR)/libciri.so \
+		-mergereturn -lsnum \
+		-ciri-tracer-pass \
+		-trace-file=$(NAME).trace \
+		-lock-modeling-file=$(LOCK_MODELING) \
+		-unlock-modeling-file=$(UNLOCK_MODELING) \
+		-remove-lsnum \
+		-stats -debug $< -o $@
+
+lps_from_brs.txt: $(NAME).all.bc
+	$(OPT) -load $(TRACER_DIR)/libciri.so \
+		-mergereturn -lsnum \
+		-dprintlpsfrombrs \
+		-remove-lsnum \
+		-stats -debug $<
+
+print_src_map.txt : $(NAME).all.bc
+	$(OPT) -load $(TRACER_DIR)/libciri.so \
+		-mergereturn \
+		-dprintsrcmap \
+		-stats -debug $<
+
+print-name : $(NAME).all.bc
+	$(OPT) -load $(TRACER_DIR)/libciri.so \
+	-print-func-pass \
+	$(NAME).all.bc
+
+# Merge all bc into one bc
+$(NAME).all.bc: $(NAME).bc
+	$(LLVM_LINK) $(IR_FILES) -o $@
+
+# Generate a pure executable
+$(NAME).exe : $(NAME).o
+	$(CXX) -g $(OBJ_FILES) $(LINK_LIBS) -lpmemobj -lpthread -o $@
+
+# Generate an executable for coverage report
+$(NAME).fuzz.exe : $(NAME).fuzz.o
+	afl-clang++ -g $(FUZZ_FILES) $(LINK_LIBS) -lpmemobj -lpthread -o $@
+
+# Generate an executable for coverage report
+$(NAME).cov.exe : $(NAME).cov.o
+	$(CXX) -g -fprofile-instr-generate -fcoverage-mapping $(COV_FILES) $(LINK_LIBS) -lpmemobj -lpthread -o $@
+
+
+.PHONY: ptrace rebuild clean
+
+# Rebuild
+rebuild: clean all
+
+# Clean
+clean:
+	@ rm -rf *.ll *.bc *.o *.s *.exe print_src_map.txt

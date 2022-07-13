@@ -1,0 +1,300 @@
+########################### User defined variables ###########################
+NAME ?= main
+DEBUGFLAGS ?= -debug
+GIRI_DIR ?=
+
+PM_FILE_PATH ?=
+PM_SIZE ?=
+PM_LAYOUT ?=
+OP_FILE_PATH ?=
+OUTPUT_PATH ?=
+INPUT ?=
+
+PM_ADDR ?=
+
+TRACE_EXE ?=
+EXE ?=
+ALL_BC ?=
+
+NEED_DEL ?= true
+LOCK_FREE?= 0
+DS_TYPE ?= 0
+WINDOW ?= 5
+
+TRACE_SRC ?=
+
+################# Dont' edit the following lines accidently ##################
+CC = $(LLVM9_BIN)/clang
+CXX = $(LLVM9_BIN)/clang++
+OPT = $(LLVM9_BIN)/opt
+TRACER_DIR = $(DURINN_HOME)/tracer
+CHECKER_DIR = $(DURINN_HOME)/trace_checker
+
+CHECKER_OUT_PATH = checker-output
+RES_OUT_PATH = res-output
+LS_CHECKER_OUT_PATH = checker-output-ls
+
+.PHONY: all
+
+all: $(RES_OUT_PATH)
+
+count: $(NAME).trace
+	- $(CHECKER_DIR)/count.py \
+		-exe $(EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(LS_CHECKER_OUT_PATH)6 \
+		-needdel $(NEED_DEL) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 6
+
+res_all.csv: $(RES_OUT_PATH) $(RES_OUT_PATH)-ls
+	- $(CHECKER_DIR)/res_all.py
+
+$(LS_CHECKER_OUT_PATH)6: $(NAME).trace
+	- $(CHECKER_DIR)/main_last_store.py \
+		-exe $(EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(LS_CHECKER_OUT_PATH)6 \
+		-needdel $(NEED_DEL) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 6
+
+$(LS_CHECKER_OUT_PATH)5: $(NAME).trace
+	- $(CHECKER_DIR)/main_last_store.py \
+		-exe $(EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(LS_CHECKER_OUT_PATH)5 \
+		-needdel $(NEED_DEL) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 5
+
+$(LS_CHECKER_OUT_PATH)4: $(NAME).trace
+	- $(CHECKER_DIR)/main_last_store.py \
+		-exe $(EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(LS_CHECKER_OUT_PATH)4 \
+		-needdel $(NEED_DEL) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 4
+
+$(LS_CHECKER_OUT_PATH)3: $(NAME).trace
+	- $(CHECKER_DIR)/main_last_store.py \
+		-exe $(EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(LS_CHECKER_OUT_PATH)3 \
+		-needdel $(NEED_DEL) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 3
+
+$(LS_CHECKER_OUT_PATH)2: $(NAME).trace
+	- $(CHECKER_DIR)/main_last_store.py \
+		-exe $(EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(LS_CHECKER_OUT_PATH)2 \
+		-needdel $(NEED_DEL) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 2
+
+$(LS_CHECKER_OUT_PATH)1: $(NAME).trace
+	- $(CHECKER_DIR)/main_last_store.py \
+		-exe $(EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(LS_CHECKER_OUT_PATH)1 \
+		-needdel $(NEED_DEL) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 1
+
+$(LS_CHECKER_OUT_PATH)0: $(NAME).trace
+	- $(CHECKER_DIR)/main_last_store.py \
+		-exe $(EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(LS_CHECKER_OUT_PATH)0 \
+		-needdel $(NEED_DEL) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 0
+
+trace_src:
+	- $(CHECKER_DIR)/trace_src.py \
+		-i $(TRACE_SRC) \
+		-o trace_debug \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-allbc $(ALL_BC)
+
+$(RES_OUT_PATH)-ls:
+	- $(CHECKER_DIR)/res_analysis_ls.py \
+		-o $(RES_OUT_PATH)-ls \
+		-allbc $(ALL_BC)
+
+$(RES_OUT_PATH):
+	- $(CHECKER_DIR)/res_analysis.py \
+		-o $(RES_OUT_PATH) \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-allbc $(ALL_BC)
+
+$(CHECKER_OUT_PATH)6: $(NAME).trace
+	- $(CHECKER_DIR)/main.py \
+		-exe $(EXE) \
+		-traceexe $(TRACE_EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(CHECKER_OUT_PATH)6 \
+		-needdel $(NEED_DEL) \
+		-window $(WINDOW) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 6
+
+$(CHECKER_OUT_PATH)5: $(NAME).trace
+	- $(CHECKER_DIR)/main.py \
+		-exe $(EXE) \
+		-traceexe $(TRACE_EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(CHECKER_OUT_PATH)5 \
+		-needdel $(NEED_DEL) \
+		-window $(WINDOW) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 5
+
+$(CHECKER_OUT_PATH)4: $(NAME).trace
+	- $(CHECKER_DIR)/main.py \
+		-exe $(EXE) \
+		-traceexe $(TRACE_EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(CHECKER_OUT_PATH)4 \
+		-needdel $(NEED_DEL) \
+		-window $(WINDOW) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 4
+
+$(CHECKER_OUT_PATH)3: $(NAME).trace
+	- $(CHECKER_DIR)/main.py \
+		-exe $(EXE) \
+		-traceexe $(TRACE_EXE) \
+		-pmsize $(PM_SIZE) \
+		-pmlayout $(PM_LAYOUT) \
+		-op $(OP_FILE_PATH) \
+		-t $(NAME).trace \
+		-opt $(OPT) \
+		-tracerdir $(TRACER_DIR) \
+		-pmaddr $(PM_ADDR) \
+		-name $(NAME) \
+		-allbc $(ALL_BC) \
+		-o $(CHECKER_OUT_PATH)3 \
+		-needdel $(NEED_DEL) \
+		-window $(WINDOW) \
+		-lockfree $(LOCK_FREE) \
+		-dstype $(DS_TYPE) \
+		-lockbased 3
+
+# Execute the executable to collect the trace
+$(NAME).trace:
+	- PMEM_IS_PMEM_FORCE=0 $(TRACE_EXE) $(INPUT)
+
+# Run the pure executable
+run :
+	- $(EXE) $(INPUT)
+
+# Clean
+clean:
+	@ rm -rf *.trace *trace.storevalue $(PM_FILE_PATH) $(OUTPUT_PATH) \
+		$(CHECKER_OUT_PATH)* $(RES_OUT_PATH)* $(LS_CHECKER_OUT_PATH)* \
+		brs.txt lps_from_brs.txt res_all.csv durinn.csv

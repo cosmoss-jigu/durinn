@@ -1,0 +1,33 @@
+# Disable pagination
+set pagination off
+
+# get two threads
+b run_op_in_parallel
+run
+set $t1 = $_thread
+c
+set $t2 = $_thread
+clear
+thread $t1
+
+# locking the scheduler
+set scheduler-locking on
+
+# go to the specific place in the first thread
+b api_begin
+c
+clear
+b SRC_LINE
+set $i=0
+while ($i < HIT_COUNT)
+  set $i=$i+1
+  c
+end
+clear
+
+# execute the second thread
+thread $t2
+c
+
+# quit
+q

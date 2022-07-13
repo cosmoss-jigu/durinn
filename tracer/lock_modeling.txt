@@ -1,0 +1,8 @@
+_Z13lock_modelingRlS_
+_ZN9Directory7AcquireEv
+_ZN9ART_ROWEX1N18writeLockOrRestartERb
+_ZN9ART_ROWEX1N20lockVersionOrRestartERmRb
+LOCK_ACQ
+TRYLOCK_ACQ
+LOCK_ACQ_RES
+_ZN3hot5rowex16HOTRowexNodeBase7tryLockEv
